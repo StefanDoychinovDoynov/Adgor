@@ -7,6 +7,8 @@ const cors = require("cors");
 const app = express();
 const PORT = 8080;
 
+let structure, products;
+
 // Middleware for parsing JSON requests and incoming form-data requests
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -123,36 +125,50 @@ app.get("/page-get-schema", (req, res) => {
 
 // Get the full directory structure
 app.get("/structure", (req, res) => {
-    const structure = GetStructure();
     res.status(200).json(structure);
 });
 
-// POST request to create/save a new page with schema and HTML content
+// POST request to create/save a new page
 const CreatePage = require("./routes/CreatePage");
 app.use("/page", (req, res, next) => {
     req.UPLOADS_DIR = UPLOADS_DIR;
     next();
-}, CreatePage);
+}, CreatePage, (req, res) => {
+    structure = GetStructure();
+    res.status(200).json(res.data);
+});
 
 // POST request to edit an existing page
 const EditPage = require("./routes/EditPage");
 app.use("/page/edit", (req, res, next) => {
+    console.log("hello")
     req.UPLOADS_DIR = UPLOADS_DIR;
     next();
-}, EditPage);
+}, EditPage, (req, res) => {
+    structure = GetStructure();
+    res.status(200).json(res.data);
+});
 
+// POST request to rename a page
 const RenamePage = require("./routes/RenamePage");
 app.use("/page/rename", (req, res, next) => {
     req.UPLOADS_DIR = UPLOADS_DIR;
+    console.log("hello")
     next();
-}, RenamePage);
+}, RenamePage, (req, res) => {
+    structure = GetStructure();
+    res.status(200).json(res.data);
+});
 
 // DELETE request to delete a page
 const DeletePage = require("./routes/DeletePage");
 app.use("/delete/page", (req, res, next) => {
     req.UPLOADS_DIR = UPLOADS_DIR;
     next();
-}, DeletePage);
+}, DeletePage, (req, res) => {
+    structure = GetStructure();
+    res.status(200).json(res.data);
+});
 
 const Image = require("./routes/Image");
 app.use("/image", Image);
@@ -164,6 +180,8 @@ app.use("/video", Video);
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
     
+    structure = GetStructure();
+
     // Load the structure at startup
-    console.log(GetStructure());
+    console.log(structure);
 });

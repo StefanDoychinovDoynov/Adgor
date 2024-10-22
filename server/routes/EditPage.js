@@ -3,7 +3,7 @@ const router = express.Router();
 const path = require("path");
 const fs = require("fs");
 
-router.post("/", (req, res) => {
+router.post("/", (req, res, next) => {
     const { pagePath, htmlContent, schema } = req.body;
 
     if (!pagePath || !htmlContent || !schema) {
@@ -21,7 +21,8 @@ router.post("/", (req, res) => {
     fs.writeFileSync(htmlFilePath, htmlContent);
     fs.writeFileSync(schemaFilePath, JSON.stringify(schema, null, 2));
 
-    res.status(200).json({ message: "Page edited successfully." });
+    res.data = { message: "Page edited successfully." };
+    next();
 })
 
 module.exports = router;
