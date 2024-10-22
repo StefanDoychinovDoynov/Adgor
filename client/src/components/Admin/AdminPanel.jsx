@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import Editor from "./Editor";
 import axios from "axios";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+import Products from "./Products";
 
 const URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8080";
 
@@ -121,6 +122,7 @@ function AdminPanel() {
         return (
             <div>
                 <button onClick={() => {document.location.href = "/admin/create"}}>Create</button>
+                <button onClick={() => {document.location.href = "/admin/products"}}>Products</button>
 
                 <h2>Page Structure</h2>
                 {/* {structure == true ? renderStructure(structure) : <h3>Empty</h3>} */}
@@ -136,6 +138,7 @@ function AdminPanel() {
                 <Route path="/" element={<Structure />} />
                 <Route path="/create" element={<Editor structure={structure} />} />
                 <Route path="/edit/*" element={<Editor structure={structure} />} />
+                <Route path="/products" element={<Products />} />
             </Routes>
         </div>
     );
