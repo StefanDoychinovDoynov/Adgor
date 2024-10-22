@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8080";
 
-const Products = () => {
+const ProductsManager = () => {
     const [products, setProducts] = useState([]);
     const [newProduct, setNewProduct] = useState({
         id: '',
@@ -199,4 +199,4 @@ const Products = () => {
     );
 };
 
-export default Products;
+export default ProductsManager;

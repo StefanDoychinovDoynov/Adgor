@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AdminPanel from './components/Admin/AdminPanel';
-import Page from './components/Page';
+import {Page} from './components/Page.jsx';
+import Products from './components/Products';
 
 const isAuthenticated = () => {
   return true;
@@ -17,6 +18,8 @@ function App() {
         <Route path="/" element={<Page />} />
 
         <Route path="/page/*" element={<Page />} />
+
+        <Route path="/products" element={<Products />} />
         
         <Route 
           path="/admin/*" 

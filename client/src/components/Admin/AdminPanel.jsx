@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Editor from "./Editor";
 import axios from "axios";
 import { Route, Routes } from "react-router-dom";
-import Products from "./Products";
+import ProductsManager from "./ProductsManager";
 
 const URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8080";
 
@@ -138,7 +138,7 @@ function AdminPanel() {
                 <Route path="/" element={<Structure />} />
                 <Route path="/create" element={<Editor structure={structure} />} />
                 <Route path="/edit/*" element={<Editor structure={structure} />} />
-                <Route path="/products" element={<Products />} />
+                <Route path="/products" element={<ProductsManager />} />
             </Routes>
         </div>
     );

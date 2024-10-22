@@ -80,6 +80,9 @@ function Page() {
   return (
     <div>
       <MenuSections />
+      <br />
+      <br />
+      <button onClick={() => { document.location.href = "/products" }}>Products</button>
 
       <h1>{title}</h1>
 
@@ -88,4 +91,4 @@ function Page() {
   );
 }
 
-export default Page;
+export {Page, MenuSections};
