@@ -54,7 +54,7 @@ const Products = () => {
 
     const addProduct = async () => {
         newProduct.id = uuidv4();
-
+    
         try {
             const formData = new FormData();
             if (selectedFile) {
@@ -64,24 +64,25 @@ const Products = () => {
                         "Content-Type": "multipart/form-data"
                     }
                 });
-
+    
+                // Update the image path immediately after successful upload
                 newProduct.imagePath = URL + "/image?name=" + response.data.image;
-                setProducts([...products, newProduct]);
+                setProducts([...products, newProduct]); // Add new product to state
                 setNewProduct({ id: '', imagePath: '', name: '', price: '' });
                 setSelectedFile(null); // Clear the file input after adding
             } else {
                 alert("No file selected for upload.");
             }
-        } catch(err) {
+        } catch (err) {
             alert(err);
         }
     };
-
+    
     const saveProducts = async () => {
         try {
             // Handle image file upload for edited products if there are any changes
             const updatedProducts = [...products];
-
+    
             for (let index in editFiles) {
                 const file = editFiles[index];
                 if (file) {
@@ -92,17 +93,19 @@ const Products = () => {
                             "Content-Type": "multipart/form-data"
                         }
                     });
-
+    
+                    // Update the image path immediately after successful upload
                     updatedProducts[index].imagePath = URL + "/image?name=" + response.data.image;
                 }
             }
-
+    
             await axios.post(URL + "/products/edit", {
                 newProducts: updatedProducts
             });
-
+    
             alert("Successfully saved products");
             setEditFiles({}); // Clear edited files after saving
+            setProducts(updatedProducts); // Update the products state
         } catch (err) {
             alert(err);
         }
@@ -113,6 +116,7 @@ const Products = () => {
             <h2>Products</h2>
 
             <button onClick={saveProducts}>Save</button>
+            <button onClick={() => {document.location.href = "/admin"}}>Home</button>
             <br />
             <br />
 
