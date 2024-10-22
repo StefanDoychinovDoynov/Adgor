@@ -8,6 +8,7 @@ const app = express();
 const PORT = 8080;
 
 let structure, products;
+const productsFilePath = path.join(__dirname, 'files', 'products.json');
 
 // Middleware for parsing JSON requests and incoming form-data requests
 app.use(express.urlencoded({ extended: true }));
@@ -176,12 +177,46 @@ app.use("/image", Image);
 const Video = require("./routes/Video");
 app.use("/video", Video);
 
+app.get("/products", (req, res) => {
+    res.status(200).json(products);
+});
+
+app.post("/products/edit", (req, res) => {
+    const { newProducts } = req.body;
+
+    if(!newProducts) {
+        res.status(400).json({ error: "No products were given" });
+    }
+
+    try {
+        products = newProducts;
+        fs.writeFileSync(productsFilePath, JSON.stringify(products), 'utf-8');
+        res.status(200).json({ message: "Products updated successfully" });
+    } catch(err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+})
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
     
     structure = GetStructure();
-
-    // Load the structure at startup
     console.log(structure);
+
+    if (!fs.existsSync(productsFilePath)) {
+        // File doesn't exist, create it with an empty array
+        fs.writeFileSync(productsFilePath, '[]', 'utf-8');
+        console.log('Created products.json with empty array.');
+    }
+
+    try {
+        const productsData = fs.readFileSync(productsFilePath, 'utf-8'); // Read the file synchronously
+        products = JSON.parse(productsData); // Parse the JSON data
+        console.log('Products loaded:', products); // Log the loaded products
+    } catch (err) {
+        console.error('Error reading or parsing products file:', err);
+        products = []; // Fallback to an empty array in case of error
+    }
 });
