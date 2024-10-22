@@ -13,6 +13,7 @@ const Products = () => {
         price: ''
     });
     const [selectedFile, setSelectedFile] = useState(null);
+    const [editFiles, setEditFiles] = useState({}); // To track file changes for edited products
 
     useEffect(() => {
         const getProducts = async () => {
@@ -29,12 +30,21 @@ const Products = () => {
         setNewProduct({ ...newProduct, [name]: value });
     };
 
-    // Handles the image file selection
+    // Handles the image file selection for new products
     const handleFileChange = (e) => {
         setSelectedFile(e.target.files[0]);
     };
 
-    // Handles the change for editing existing products
+    // Handles the image file selection for edited products
+    const handleEditFileChange = (index, e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const updatedEditFiles = { ...editFiles, [index]: file };
+            setEditFiles(updatedEditFiles); // Track the new file for the product being edited
+        }
+    };
+
+    // Handles the change for editing existing products (excluding images)
     const handleEditProductChange = (index, e) => {
         const { name, value } = e.target;
         const updatedProducts = [...products];
@@ -56,10 +66,9 @@ const Products = () => {
                 });
 
                 newProduct.imagePath = URL + "/image?name=" + response.data.image;
-                console.log(newProduct.imagePath);
-
                 setProducts([...products, newProduct]);
                 setNewProduct({ id: '', imagePath: '', name: '', price: '' });
+                setSelectedFile(null); // Clear the file input after adding
             } else {
                 alert("No file selected for upload.");
             }
@@ -70,10 +79,30 @@ const Products = () => {
 
     const saveProducts = async () => {
         try {
+            // Handle image file upload for edited products if there are any changes
+            const updatedProducts = [...products];
+
+            for (let index in editFiles) {
+                const file = editFiles[index];
+                if (file) {
+                    const formData = new FormData();
+                    formData.append("image", file);
+                    const response = await axios.post(URL + "/image", formData, {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    });
+
+                    updatedProducts[index].imagePath = URL + "/image?name=" + response.data.image;
+                }
+            }
+
             await axios.post(URL + "/products/edit", {
-                newProducts: products
+                newProducts: updatedProducts
             });
+
             alert("Successfully saved products");
+            setEditFiles({}); // Clear edited files after saving
         } catch (err) {
             alert(err);
         }
@@ -90,13 +119,16 @@ const Products = () => {
             {/* Rendering existing products with editable fields */}
             {products.length > 0 ? products.map((item, index) => (
                 <div key={index}>
+                    {item.imagePath && (
+                        <img alt={item.name} src={item.imagePath} style={{ width: "100px" }} />
+                    )}
+                    <br />
                     <label>
-                        Image URL:
+                        Change Image:
                         <input
-                            type="text"
-                            name="imagePath"
-                            value={item.imagePath}
-                            onChange={(e) => handleEditProductChange(index, e)}
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleEditFileChange(index, e)} // Handle image changes
                         />
                     </label>
                     <br />
@@ -120,9 +152,6 @@ const Products = () => {
                         />
                     </label>
                     <br />
-                    {item.imagePath && (
-                        <img alt={item.name} src={item.imagePath} style={{ width: "100px" }} />
-                    )}
                 </div>
             )) : <div>No Products</div>}
 
