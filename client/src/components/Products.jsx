@@ -98,7 +98,10 @@ const Products = () => {
                             );
                         })}
 
-                        <input type="submit" value="Submit" />
+                        {/* Custom Success Page Redirect */}
+                        <input type="hidden" name="redirect" value={`${window.location.origin}/success`} />
+
+                        <input type="submit" />
                     </form>
                 </div>
             )}
