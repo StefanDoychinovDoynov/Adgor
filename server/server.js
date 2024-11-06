@@ -7,8 +7,9 @@ const cors = require("cors");
 const app = express();
 const PORT = 8080;
 
-let structure, products;
+let structure, products, vouchers;
 const productsFilePath = path.join(__dirname, 'files', 'products.json');
+const vouchersFilePath = path.join(__dirname, 'files', 'vouchers.json');
 
 // Middleware for parsing JSON requests and incoming form-data requests
 app.use(express.urlencoded({ extended: true }));
@@ -177,6 +178,8 @@ app.use("/image", Image);
 const Video = require("./routes/Video");
 app.use("/video", Video);
 
+
+// Products
 app.get("/products", (req, res) => {
     res.status(200).json(products);
 });
@@ -198,6 +201,28 @@ app.post("/products/edit", (req, res) => {
     }
 })
 
+// Vouchers
+app.get("/vouchers", (req, res) => {
+    res.status(200).json(vouchers);
+});
+
+app.post("/vouchers/edit", (req, res) => {
+    const { newVouchers } = req.body;
+
+    if(!newVouchers) {
+        res.status(400).json({ error: "No vouchers were given" });
+    }
+
+    try {
+        vouchers = newVouchers;
+        fs.writeFileSync(vouchersFilePath, JSON.stringify(vouchers), 'utf-8');
+        res.status(200).json({ message: "Vouchers updated successfully" });
+    } catch(err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+})
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
@@ -205,6 +230,7 @@ app.listen(PORT, () => {
     structure = GetStructure();
     console.log(structure);
 
+    // Load Products
     if (!fs.existsSync(productsFilePath)) {
         // File doesn't exist, create it with an empty array
         fs.writeFileSync(productsFilePath, '[]', 'utf-8');
@@ -218,5 +244,21 @@ app.listen(PORT, () => {
     } catch (err) {
         console.error('Error reading or parsing products file:', err);
         products = []; // Fallback to an empty array in case of error
+    }
+
+    // Load Vouchers
+    if (!fs.existsSync(vouchersFilePath)) {
+        // File doesn't exist, create it with an empty array
+        fs.writeFileSync(vouchersFilePath, '[]', 'utf-8');
+        console.log('Created vouchers.json with empty array.');
+    }
+
+    try {
+        const vouchersData = fs.readFileSync(vouchersFilePath, 'utf-8'); // Read the file synchronously
+        vouchers = JSON.parse(vouchersData); // Parse the JSON data
+        console.log('Vouchers loaded:', vouchers); // Log the loaded products
+    } catch (err) {
+        console.error('Error reading or parsing products file:', err);
+        vouchers = []; // Fallback to an empty array in case of error
     }
 });
