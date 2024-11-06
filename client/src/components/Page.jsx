@@ -83,6 +83,7 @@ function Page() {
       <br />
       <br />
       <button onClick={() => { document.location.href = "/products" }}>Products</button>
+      <button onClick={() => { document.location.href = "/vouchers" }}>Vouchers</button>
 
       <h1>{title}</h1>
 
