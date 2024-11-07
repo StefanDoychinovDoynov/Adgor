@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import Editor from "./Editor";
 import axios from "axios";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+import ProductsManager from "./ProductsManager";
+import VouchersManager from "./VouchersManager";
 
 const URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8080";
 
@@ -120,8 +122,10 @@ function AdminPanel() {
     const Structure = () => {
         return (
             <div>
-                <button id="create" onClick={() => {document.location.href = "/admin/create"}}>Create</button>
 
+                <button onClick={() => {document.location.href = "/admin/create"}}>Create</button>
+                <button onClick={() => {document.location.href = "/admin/products"}}>Products</button>
+                <button onClick={() => {document.location.href = "/admin/vouchers"}}>Vouchers</button>
                 <h2 id="PageStructure">Page Structure</h2>
                 {/* {structure == true ? renderStructure(structure) : <h3>Empty</h3>} */}
                 {renderStructure(structure)}
@@ -136,6 +140,8 @@ function AdminPanel() {
                 <Route path="/" element={<Structure />} />
                 <Route path="/create" element={<Editor structure={structure} />} />
                 <Route path="/edit/*" element={<Editor structure={structure} />} />
+                <Route path="/products" element={<ProductsManager />} />
+                <Route path="/vouchers" element={<VouchersManager />} />
             </Routes>
         </div>
     );
