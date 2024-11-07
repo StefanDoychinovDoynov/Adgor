@@ -131,7 +131,7 @@ function AdminPanel() {
                 {renderStructure(structure)}
             </div>
         );
-    }
+    } 
 
     return (
         <div>
