@@ -120,9 +120,9 @@ function AdminPanel() {
     const Structure = () => {
         return (
             <div>
-                <button onClick={() => {document.location.href = "/admin/create"}}>Create</button>
+                <button id="create" onClick={() => {document.location.href = "/admin/create"}}>Create</button>
 
-                <h2>Page Structure</h2>
+                <h2 id="PageStructure">Page Structure</h2>
                 {/* {structure == true ? renderStructure(structure) : <h3>Empty</h3>} */}
                 {renderStructure(structure)}
             </div>
